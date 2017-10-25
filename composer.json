@@ -15,8 +15,7 @@
         "psr-4": {
             "atoum\\teamcity\\": "src",
             "atoum\\teamcity\\test\\": "test"
-        },
-        "files": ["configuration.php"]
+        }
     },
     "require": {
         "atoum/atoum": "^3.2"
