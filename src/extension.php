@@ -31,11 +31,10 @@ class extension implements atoum\extension
 
     public function addToRunner(runner $runner)
     {
-        $runner->addExtension($this);
-
         $report = $this->getReport();
         $report->addWriter(new writers\std\out());
 
+        $runner->addExtension($this);
         $runner->addReport($report);
 
         return $this;
