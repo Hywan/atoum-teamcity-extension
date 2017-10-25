@@ -148,11 +148,25 @@ class report extends asynchronous
                 break;
 
             case test::skipped:
+                $testSuiteName = $observable->getClass();
+                $testCaseName  = $observable->getCurrentMethod();
+                $details       = '';
+
+                foreach ($observable->getScore()->getSkippedMethods() as $skippedMethod) {
+                    if ($testSuiteName === $skippedMethod['class'] &&
+                        $testCaseName  === $skippedMethod['method']) {
+                        $details = $skippedMethod['message'];
+
+                        break;
+                    }
+                }
+
                 $this->add(
                     'testIgnored',
                     [
-                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message' => 'skipped'
+                        'name'    => $testSuiteName . '::' . $testCaseName,
+                        'message' => 'skipped',
+                        'details' => $details
                     ]
                 );
 
