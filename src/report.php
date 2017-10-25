@@ -313,7 +313,7 @@ class report extends asynchronous
                     'testFailed',
                     [
                         'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message' => '',
+                        'message' => 'A runtime exception has been thrown.',
                         'details' => ''
                     ]
                 );
