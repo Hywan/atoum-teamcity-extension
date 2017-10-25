@@ -49,11 +49,16 @@ class report extends asynchronous
                 break;
 
             case test::afterTestMethod:
+                $testSuiteName = $observable->getClass();
+                $testCaseName  = $observable->getCurrentMethod();
+                $testPath      = $observable->getPath();
+
                 $this->add(
                     'testStarted',
                     [
-                        'name'                  => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'captureStandardOutput' => 'true'
+                        'name'                  => $testSuiteName . '::' . $testCaseName,
+                        'captureStandardOutput' => 'true',
+                        'locationHint'          => 'php_qn://' . $testPath . '::\\' . $testSuiteName . '::' . $testCaseName
                     ]
                 );
 
