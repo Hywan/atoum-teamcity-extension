@@ -234,12 +234,40 @@ class report extends asynchronous
                 break;
 
             case test::error:
+                $testSuiteName = $observable->getClass();
+                $testCaseName  = $observable->getCurrentMethod();
+                $testDuration  = (string) $this->getDuration($observable->getScore(), $testSuiteName, $testCaseName);
+                $message       = '';
+                $details       = '';
+
+                foreach ($observable->getScore()->getErrors() as $error) {
+                    if ($testSuiteName === $error['class'] &&
+                        $testCaseName  === $error['method']) {
+                        $message = 'PHP error number ' . $error['type'];
+                        $details = sprintf(
+                            'Error rasied in %s at line %d:' . "\n" . '%s',
+                            $error['errorFile'],
+                            $error['errorLine'],
+                            $error['message']
+                        );
+
+                        break;
+                    }
+                }
+
                 $this->add(
-                    'testFailed',
+                    'testIgnored',
                     [
                         'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message' => '',
-                        'details' => ''
+                        'message' => $message,
+                        'details' => $details
+                    ]
+                );
+                $this->add(
+                    'testFinished',
+                    [
+                        'name'     => $testSuiteName . '::' . $testCaseName,
+                        'duration' => $testDuration
                     ]
                 );
 
