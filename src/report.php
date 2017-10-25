@@ -365,7 +365,6 @@ class report extends asynchronous
         $this->string .= '##teamcity[' . $eventName;
 
         if (!isset($arguments['timestamp'])) {
-            //timestamp='2008-09-03T14:02:34.487'
             $arguments['timestamp'] = (new DateTime())->format('Y-m-d\TH:i:s.vP');
         }
 
