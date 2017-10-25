@@ -145,11 +145,39 @@ class report extends asynchronous
                 break;
 
             case test::uncompleted:
+                $testSuiteName = $observable->getClass();
+                $testCaseName  = $observable->getCurrentMethod();
+                $testDuration  = (string) $this->getDuration($observable->getScore(), $testSuiteName, $testCaseName);
+                $details       = '';
+
+                foreach ($observable->getScore()->getUncompletedMethods() as $incompletedMethod) {
+                    if ($testSuiteName === $incompletedMethod['class'] &&
+                        $testCaseName  === $incompletedMethod['method']) {
+                        var_dump($incompletedMethod);
+                        $details = sprintf(
+                            'Exit code: %d' . "\n" .
+                            'Output: %s',
+                            $incompletedMethod['exitCode'],
+                            $incompletedMethod['output']
+                        );
+
+                        break;
+                    }
+                }
+
                 $this->add(
                     'testIgnored',
                     [
                         'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message' => 'uncompleted'
+                        'message' => 'incompleted',
+                        'details' => $details
+                    ]
+                );
+                $this->add(
+                    'testFinished',
+                    [
+                        'name'     => $testSuiteName . '::' . $testCaseName,
+                        'duration' => $testDuration
                     ]
                 );
 
