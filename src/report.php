@@ -99,6 +99,7 @@ class report extends asynchronous
             case test::fail:
                 $testSuiteName = $observable->getClass();
                 $testCaseName  = $observable->getCurrentMethod();
+                $testDuration  = (string) $this->getDuration($observable->getScore(), $testSuiteName, $testCaseName);
                 $message       = '';
                 $details       = '';
 
@@ -128,6 +129,13 @@ class report extends asynchronous
                         'name'    => $testSuiteName . '::' . $testCaseName,
                         'message' => $message,
                         'details' => $details
+                    ]
+                );
+                $this->add(
+                    'testFinished',
+                    [
+                        'name'     => $testSuiteName . '::' . $testCaseName,
+                        'duration' => $testDuration
                     ]
                 );
 
