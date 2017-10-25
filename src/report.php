@@ -174,6 +174,13 @@ class report extends asynchronous
                         'details' => $details
                     ]
                 );
+                $this->add(
+                    'testFinished',
+                    [
+                        'name'     => $testSuiteName . '::' . $testCaseName,
+                        'duration' => '0'
+                    ]
+                );
 
                 break;
 
