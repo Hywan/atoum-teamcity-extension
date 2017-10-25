@@ -1,0 +1,25 @@
+{
+    "name": "atoum/teamcity-extension",
+    "type": "library",
+    "description": "Add TeamCity support to atoum",
+    "keywords": ["atoum", "test", "atoum-extension", "teamcity"],
+    "homepage": "http://www.atoum.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ivan Enderlin",
+            "email": "ivan.enderlin@hoa-project.net"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "atoum\\teamcity\\": "src",
+            "atoum\\teamcity\\test\\": "test"
+        },
+        "files": ["configuration.php"]
+    },
+    "require": {
+        "atoum/atoum": "^3.2"
+    },
+    "minimum-stability": "beta"
+}
