@@ -256,7 +256,7 @@ class report extends asynchronous
                 }
 
                 $this->add(
-                    'testIgnored',
+                    'testFailed',
                     [
                         'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
                         'message' => $message,
