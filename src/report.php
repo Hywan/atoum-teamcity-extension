@@ -70,9 +70,8 @@ class report extends asynchronous
                 $this->add(
                     'testStarted',
                     [
-                        'name'                  => $testSuiteName . '::' . $testCaseName,
-                        'captureStandardOutput' => 'true',
-                        'locationHint'          => 'php_qn://' . $testPath . '::\\' . $testSuiteName . '::' . $testCaseName
+                        'name'         => $testSuiteName . '::' . $testCaseName,
+                        'locationHint' => 'php_qn://' . $testPath . '::\\' . $testSuiteName . '::' . $testCaseName
                     ]
                 );
 
@@ -126,10 +125,9 @@ class report extends asynchronous
                 $this->add(
                     'testFailed',
                     [
-                        'name'                  => $testSuiteName . '::' . $testCaseName,
-                        'message'               => $message,
-                        'captureStandardOutput' => 'true',
-                        'details'               => $details
+                        'name'    => $testSuiteName . '::' . $testCaseName,
+                        'message' => $message,
+                        'details' => $details
                     ]
                 );
 
@@ -231,10 +229,9 @@ class report extends asynchronous
                 $this->add(
                     'testFailed',
                     [
-                        'name'                  => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message'               => '',
-                        'captureStandardOutput' => 'true',
-                        'details'               => ''
+                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'message' => '',
+                        'details' => ''
                     ]
                 );
 
@@ -244,10 +241,9 @@ class report extends asynchronous
                 $this->add(
                     'testFailed',
                     [
-                        'name'                  => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message'               => '',
-                        'captureStandardOutput' => 'true',
-                        'details'               => ''
+                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'message' => '',
+                        'details' => ''
                     ]
                 );
 
@@ -257,10 +253,9 @@ class report extends asynchronous
                 $this->add(
                     'testFailed',
                     [
-                        'name'                  => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message'               => '',
-                        'captureStandardOutput' => 'true',
-                        'details'               => ''
+                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'message' => '',
+                        'details' => ''
                     ]
                 );
 
