@@ -30,13 +30,22 @@ class report extends asynchronous
                 break;
 
             /**
-             * Test case starts.
+             * Test suite starts.
              */
 
             case test::runStart:
-                // noop
+                $this->add(
+                    'testSuiteStarted',
+                    [
+                        'name' => $observable->getClass()
+                    ]
+                );
 
                 break;
+
+            /**
+             * Test case starts.
+             */
 
             case test::beforeSetUp:
                 // noop
@@ -271,7 +280,17 @@ class report extends asynchronous
 
                 break;
 
+            /**
+             * Test suite stops.
+             */
+
             case test::runStop:
+                $this->add(
+                    'testSuiteFinished',
+                    [
+                        'name' => $observable->getClass()
+                    ]
+                );
                 $this->flush();
 
                 break;
