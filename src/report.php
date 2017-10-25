@@ -7,6 +7,7 @@ namespace atoum\teamcity;
 use mageekguy\atoum\observable;
 use mageekguy\atoum\reports\asynchronous;
 use mageekguy\atoum\runner;
+use mageekguy\atoum\score;
 use mageekguy\atoum\test;
 
 class report extends asynchronous
@@ -71,16 +72,7 @@ class report extends asynchronous
             case test::success:
                 $testSuiteName = $observable->getClass();
                 $testCaseName  = $observable->getCurrentMethod();
-                $testDuration  = '';
-
-                foreach ($observable->getScore()->getDurations() as $duration) {
-                    if ($testSuiteName === $duration['class'] &&
-                        $testCaseName  === $duration['method']) {
-                        $testDuration = (string) round($duration['value'] * 1000, 2);
-
-                        break;
-                    }
-                }
+                $testDuration  = (string) $this->getDuration($observable->getScore(), $testSuiteName, $testCaseName);
 
                 $this->add(
                     'testFinished',
@@ -131,11 +123,22 @@ class report extends asynchronous
                 break;
 
             case test::void:
+                $testSuiteName = $observable->getClass();
+                $testCaseName  = $observable->getCurrentMethod();
+                $testDuration  = (string) $this->getDuration($observable->getScore(), $testSuiteName, $testCaseName);
+
                 $this->add(
                     'testIgnored',
                     [
-                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'name'    => $testSuiteName . '::' . $testCaseName,
                         'message' => 'void'
+                    ]
+                );
+                $this->add(
+                    'testFinished',
+                    [
+                        'name'     => $testSuiteName . '::' . $testCaseName,
+                        'duration' => $testDuration
                     ]
                 );
 
@@ -306,5 +309,16 @@ class report extends asynchronous
         }
 
         $this->string = null;
+    }
+
+    protected function getDuration(score $score, string $testSuiteName, string $testCaseName): float {
+        foreach ($score->getDurations() as $duration) {
+            if ($testSuiteName === $duration['class'] &&
+                $testCaseName  === $duration['method']) {
+                return round($duration['value'] * 1000, 2);
+            }
+        }
+
+        return 0.0;
     }
 }
