@@ -76,7 +76,7 @@ class report extends asynchronous
                 foreach ($observable->getScore()->getDurations() as $duration) {
                     if ($testSuiteName === $duration['class'] &&
                         $testCaseName  === $duration['method']) {
-                        $testDuration = (string) $duration['value'];
+                        $testDuration = (string) round($duration['value'] * 1000, 2);
 
                         break;
                     }
