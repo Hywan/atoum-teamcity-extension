@@ -245,7 +245,7 @@ class report extends asynchronous
                         $testCaseName  === $error['method']) {
                         $message = 'PHP error number ' . $error['type'];
                         $details = sprintf(
-                            'Error rasied in %s at line %d:' . "\n" . '%s',
+                            'Error raised in %s at line %d:' . "\n" . '%s',
                             $error['errorFile'],
                             $error['errorLine'],
                             $error['message']
@@ -258,7 +258,7 @@ class report extends asynchronous
                 $this->add(
                     'testFailed',
                     [
-                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'name'    => $testSuiteName . '::' . $testCaseName,
                         'message' => $message,
                         'details' => $details
                     ]
@@ -274,12 +274,35 @@ class report extends asynchronous
                 break;
 
             case test::exception:
+                $testSuiteName = $observable->getClass();
+                $testCaseName  = $observable->getCurrentMethod();
+                $testDuration  = (string) $this->getDuration($observable->getScore(), $testSuiteName, $testCaseName);
+                $message       = '';
+                $details       = '';
+
+                foreach ($observable->getScore()->getExceptions() as $exception) {
+                    if ($testSuiteName === $exception['class'] &&
+                        $testCaseName  === $exception['method']) {
+                        $message = 'exception';
+                        $details = $exception['value'];
+
+                        break;
+                    }
+                }
+
                 $this->add(
                     'testFailed',
                     [
-                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message' => '',
-                        'details' => ''
+                        'name'    => $testSuiteName . '::' . $testCaseName,
+                        'message' => $message,
+                        'details' => $details
+                    ]
+                );
+                $this->add(
+                    'testFinished',
+                    [
+                        'name'     => $testSuiteName . '::' . $testCaseName,
+                        'duration' => $testDuration
                     ]
                 );
 
