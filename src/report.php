@@ -50,8 +50,11 @@ class report extends asynchronous
 
             case test::afterTestMethod:
                 $this->add(
-                    '##teamcity[testStarted name=\'%s\' captureStandardOutput=\'true\']',
-                    $observable->getClass() . '::' . $observable->getCurrentMethod()
+                    'testStarted',
+                    [
+                        'name'                  => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'captureStandardOutput' => 'true'
+                    ]
                 );
 
                 break;
@@ -61,86 +64,138 @@ class report extends asynchronous
              */
 
             case test::success:
+                $testSuiteName = $observable->getClass();
+                $testCaseName  = $observable->getCurrentMethod();
+                $testDuration  = '';
+
+                foreach ($observable->getScore()->getDurations() as $duration) {
+                    if ($testSuiteName === $duration['class'] &&
+                        $testCaseName  === $duration['method']) {
+                        $testDuration = (string) $duration['value'];
+
+                        break;
+                    }
+                }
+
                 $this->add(
-                    '##teamcity[testFinished name=\'%s\' duration=\'%s\']',
-                    $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                    ''
+                    'testFinished',
+                    [
+                        'name'     => $testSuiteName . '::' . $testCaseName,
+                        'duration' => $testDuration
+                    ]
                 );
 
                 break;
 
             case test::fail:
-            case test::error:
+                $testSuiteName = $observable->getClass();
+                $testCaseName  = $observable->getCurrentMethod();
+                $message       = '';
+                $details       = '';
+
+                foreach ($observable->getScore()->getFailAssertions() as $failAssertion) {
+                    if ($testSuiteName === $failAssertion['class'] &&
+                        $testCaseName  === $failAssertion['method']) {
+                        if (false !== $newline = strpos($failAssertion['fail'], "\n")) {
+                            $message = substr($failAssertion['fail'], 0, $newline);
+                        } else {
+                            $message = $failAssertion['fail'];
+                        }
+
+                        $details = sprintf(
+                            'In %s at line %d: %s',
+                            $failAssertion['file'],
+                            $failAssertion['line'],
+                            $failAssertion['fail']
+                        );
+
+                        break;
+                    }
+                }
+
                 $this->add(
-                    '##teamcity[testFailed name=\'%s\' message=\'%s\' captureStandardOutput=\'true\' details=\'%s\']',
-                    $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                    '',
-                    ''
+                    'testFailed',
+                    [
+                        'name'                  => $testSuiteName . '::' . $testCaseName,
+                        'message'               => $message,
+                        'captureStandardOutput' => 'true',
+                        'details'               => $details
+                    ]
                 );
-
-                break;
-
-                $this->add($event);
 
                 break;
 
             case test::void:
                 $this->add(
-                    '##teamcity[testIgnored name=\'%s\' message=\'%s\']',
-                    $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                    'void'
+                    'testIgnored',
+                    [
+                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'message' => 'void'
+                    ]
                 );
 
                 break;
 
             case test::uncompleted:
                 $this->add(
-                    '##teamcity[testIgnored name=\'%s\' message=\'%s\']',
-                    $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                    'uncompleted'
+                    'testIgnored',
+                    [
+                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'message' => 'uncompleted'
+                    ]
                 );
 
                 break;
 
             case test::skipped:
                 $this->add(
-                    '##teamcity[testIgnored name=\'%s\' message=\'%s\']',
-                    $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                    'skipped'
+                    'testIgnored',
+                    [
+                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'message' => 'skipped'
+                    ]
+                );
+
+                break;
+
+            case test::error:
+                $this->add(
+                    'testFailed',
+                    [
+                        'name'                  => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'message'               => '',
+                        'captureStandardOutput' => 'true',
+                        'details'               => ''
+                    ]
                 );
 
                 break;
 
             case test::exception:
                 $this->add(
-                    '##teamcity[testFailed name=\'%s\' message=\'%s\' captureStandardOutput=\'true\' details=\'%s\']',
-                    $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                    '',
-                    ''
+                    'testFailed',
+                    [
+                        'name'                  => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'message'               => '',
+                        'captureStandardOutput' => 'true',
+                        'details'               => ''
+                    ]
                 );
 
                 break;
 
             case test::runtimeException:
                 $this->add(
-                    '##teamcity[testFailed name=\'%s\' message=\'%s\' captureStandardOutput=\'true\' details=\'%s\']',
-                    $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                    '',
-                    ''
+                    'testFailed',
+                    [
+                        'name'                  => $observable->getClass() . '::' . $observable->getCurrentMethod(),
+                        'message'               => '',
+                        'captureStandardOutput' => 'true',
+                        'details'               => ''
+                    ]
                 );
 
                 break;
-
-            case test::fail:
-                $this->add(
-                    '##teamcity[testFailed name=\'%s\' message=\'%s\' captureStandardOutput=\'true\' details=\'%s\']',
-                    $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                    '',
-                    ''
-                );
-
-                break;
-
 
             /**
              * Test case stops.
@@ -172,45 +227,46 @@ class report extends asynchronous
         }
     }
 
-    protected function add(string $format, string ...$messages)
+    protected function add(string $eventName, array $arguments)
     {
-        $this->string .= vsprintf(
-            $format,
-            array_map(
-                function ($message) {
-                    return preg_replace(
-                        [
-                            '/\x1B.*?m/',
-                            '/\|/',
-                            '/\n/',
-                            '/\r/',
-                            '/\[/',
-                            '/\]/',
-                            '/\x0085/',
-                            '/\x2028/',
-                            '/\x2029/',
-                            '/\'/',
-                        ],
-                        [
-                            '',
-                            '||',
-                            '|n',
-                            '|r',
-                            '|[',
-                            '|]',
-                            '|x',
-                            '|l',
-                            '|p',
-                            '|\'',
-                        ],
-                        $message
-                    );
+        $this->string .= '##teamcity[' . $eventName;
 
-                    return $message;
-                },
-                $messages
-            )
-        ) . "\n";
+        foreach ($arguments as $name => $value) {
+            $this->string .= ' ' . $name . '=\'' . $this->escapeValue($value) . '\'';
+        }
+
+        $this->string .= ']' . "\n";
+    }
+
+    public function escapeValue(string $value): string
+    {
+        return preg_replace(
+            [
+                '/\x1B.*?m/',
+                '/\|/',
+                '/\n/',
+                '/\r/',
+                '/\[/',
+                '/\]/',
+                '/\x0085/',
+                '/\x2028/',
+                '/\x2029/',
+                '/\'/',
+            ],
+            [
+                '',
+                '||',
+                '|n',
+                '|r',
+                '|[',
+                '|]',
+                '|x',
+                '|l',
+                '|p',
+                '|\'',
+            ],
+            $value
+        );
     }
 
     protected function flush()
