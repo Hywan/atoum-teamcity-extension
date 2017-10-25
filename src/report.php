@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace atoum\teamcity;
 
+use DateTime;
 use mageekguy\atoum\observable;
 use mageekguy\atoum\reports\asynchronous;
 use mageekguy\atoum\runner;
 use mageekguy\atoum\score;
 use mageekguy\atoum\test;
 
+/**
+ * Format specification: https://confluence.jetbrains.com/display/TCD8/Build+Script+Interaction+with+TeamCity.
+ */
 class report extends asynchronous
 {
     public function handleEvent($event, observable $observable)
@@ -153,7 +157,6 @@ class report extends asynchronous
                 foreach ($observable->getScore()->getUncompletedMethods() as $incompletedMethod) {
                     if ($testSuiteName === $incompletedMethod['class'] &&
                         $testCaseName  === $incompletedMethod['method']) {
-                        var_dump($incompletedMethod);
                         $details = sprintf(
                             'Exit code: %d' . "\n" .
                             'Output: %s',
@@ -287,6 +290,11 @@ class report extends asynchronous
     protected function add(string $eventName, array $arguments)
     {
         $this->string .= '##teamcity[' . $eventName;
+
+        if (!isset($arguments['timestamp'])) {
+            //timestamp='2008-09-03T14:02:34.487'
+            $arguments['timestamp'] = (new DateTime())->format('Y-m-d\TH:i:s.vP');
+        }
 
         foreach ($arguments as $name => $value) {
             $this->string .= ' ' . $name . '=\'' . $this->escapeValue($value) . '\'';
