@@ -1,6 +1,3 @@
 <?php
 
-use atoum\teamcity;
-
-$extension = new teamcity\extension($script);
-$extension->addToRunner($runner);
+new atoum\teamcity\extension($script);

@@ -25,7 +25,7 @@ class report extends asynchronous
              */
 
             case runner::runStart:
-                // noop
+                $this->flush();
 
                 break;
 
@@ -169,14 +169,14 @@ class report extends asynchronous
                 $testDuration  = (string) $this->getDuration($observable->getScore(), $testSuiteName, $testCaseName);
                 $details       = '';
 
-                foreach ($observable->getScore()->getUncompletedMethods() as $incompletedMethod) {
-                    if ($testSuiteName === $incompletedMethod['class'] &&
-                        $testCaseName  === $incompletedMethod['method']) {
+                foreach ($observable->getScore()->getUncompletedMethods() as $uncompletedMethod) {
+                    if ($testSuiteName === $uncompletedMethod['class'] &&
+                        $testCaseName  === $uncompletedMethod['method']) {
                         $details = sprintf(
                             'Exit code: %d' . "\n" .
                             'Output: %s',
-                            $incompletedMethod['exitCode'],
-                            $incompletedMethod['output']
+                            $uncompletedMethod['exitCode'],
+                            $uncompletedMethod['output']
                         );
 
                         break;
@@ -187,7 +187,7 @@ class report extends asynchronous
                     'testIgnored',
                     [
                         'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message' => 'incompleted',
+                        'message' => 'uncompleted',
                         'details' => $details
                     ]
                 );
@@ -309,12 +309,22 @@ class report extends asynchronous
                 break;
 
             case test::runtimeException:
+                $testSuiteName = $observable->getClass();
+                $testCaseName  = $observable->getCurrentMethod();
+                $testDuration  = (string) $this->getDuration($observable->getScore(), $testSuiteName, $testCaseName);
+
                 $this->add(
                     'testFailed',
                     [
-                        'name'    => $observable->getClass() . '::' . $observable->getCurrentMethod(),
-                        'message' => 'A runtime exception has been thrown.',
-                        'details' => ''
+                        'name'    => $testSuiteName . '::' . $testCaseName,
+                        'message' => 'A runtime exception has been thrown'
+                    ]
+                );
+                $this->add(
+                    'testFinished',
+                    [
+                        'name'     => $testSuiteName . '::' . $testCaseName,
+                        'duration' => $testDuration
                     ]
                 );
 
@@ -365,7 +375,7 @@ class report extends asynchronous
         $this->string .= '##teamcity[' . $eventName;
 
         if (!isset($arguments['timestamp'])) {
-            $arguments['timestamp'] = (new DateTime())->format('Y-m-d\TH:i:s.vP');
+            $arguments['timestamp'] = $this->newDateTime()->format('Y-m-d\TH:i:s.vP');
         }
 
         foreach ($arguments as $name => $value) {
@@ -373,6 +383,11 @@ class report extends asynchronous
         }
 
         $this->string .= ']' . "\n";
+    }
+
+    public function newDateTime(): DateTime
+    {
+        return new DateTime();
     }
 
     public function escapeValue(string $value): string
@@ -408,7 +423,7 @@ class report extends asynchronous
 
     protected function flush()
     {
-        if (null === $this->string) {
+        if (empty($this->string)) {
             return;
         }
 
