@@ -4,7 +4,7 @@
 
 ---
 
-# atoum/teamcity-extension
+# atoum/teamcity-extension [![Build Status](https://travis-ci.org/Hywan/atoum-teamcity-extension.svg?branch=master)](https://travis-ci.org/Hywan/atoum-teamcity-extension)
 
 [atoum](http://atoum.org/) is a PHP test
 framework. [TeamCity](https://www.jetbrains.com/teamcity/) is a
