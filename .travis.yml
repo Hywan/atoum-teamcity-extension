@@ -4,19 +4,27 @@ php:
   - 7.0
   - 7.1
   - nightly
-  
+
+matrix:
+  include:
+    - php: 7.0
+    - php: 7.1
+  allow_failures:
+    - php: nightly
+  fast_finish: true
+
+os:
+  - linux
+
+sudo: false
+ 
 cache:
   directories:
     - vendor
 
-sudo: false
-
-matrix:
-  allow_failures:
-    - php: nightly
-  exclude:
-    - php: 7.0
-    - php: 7.1
+env:
+  global:
+    - secure: "AAAAB3NzaC1yc2EAAAADAQABAAACAQDEsm3pNaS/+tg7s4wXE9/fM9xprhXBW3cSTlGfmvRaPey9AERnrHhyhp59jnD2g7yBmLzsGyV1pdnJZynb8/LKtYZ3AiwmK2DFSWIURqE3fmxg4+Rz8cF//I/rCz/85QuwLMDCAuJXXsqu/7qeF7q+Rx/SoBiC+FXFf+W99B32OvSAkXWD2uOwIGYJqKpuS2PISlAqlowM5gZpBUVnDrKyOAfBFu3WD/RK3EzIRT9s+hm6MbGV5xGrHdsLRgIP1MyRmpxcNK29qhpZKnOPzeOKPXABb42Aoy0qWLuSaDjE51DYKF3AkTiysQzaHXgcxSDK4ANTs428yTd1gYzZDGk7hdei7tPlKHh0IIEF6Cm2tLbrLQzjaED3mChPpv/bHzz3LR3U//uT34t6DHpUmXarz7SEmDtOae83bJi5UJ3kr8FMKySW2PDhZlSs4cqNRDc0AL6cHqDfiFEKC2iTM/GNaqLMCU1DZj7Yh35Dyr/i2Hgz8x1tWr3E+wdgntFfHq9lMsyWjFXjDmS21NJCxLXpWE68y8/8nTgrym8Zueopl+msEl+AI9g77RcasqAAAGJlOl04Q070qfbMBbb+KezyBJu3gmia0iQ3Npg46LwH2JNAW2FADULB2NEbhA/ttb9GmgXxMgj+QvBlrpV3uMeXrlxh3ZQfSIWPR6Vm3VQlcw=="
 
 script:
   - composer update
