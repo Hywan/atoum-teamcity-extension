@@ -1,0 +1,23 @@
+anguage: php
+
+php:
+  - 7.0
+  - 7.1
+  - nightly
+  
+cache:
+  directories:
+    - vendor
+
+sudo: false
+
+matrix:
+  allow_failures:
+    - php: nightly
+  exclude:
+    - php: 7.0
+    - php: 7.1
+
+script:
+  - composer update
+  - vendor/bin/atoum --test-ext
