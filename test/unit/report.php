@@ -364,6 +364,34 @@ class report extends test
             ->once();
     }
 
+    /**
+     * @dataProvider escapings
+     */
+    public function testEscapeValue(string $input, string $output)
+    {
+        $this
+            ->given($report = new SUT())
+            ->when($result = $report->escapeValue($input))
+            ->then
+                ->string($result)
+                    ->isIdenticalTo($output);
+    }
+
+    protected function escapings(): array
+    {
+        return [
+            ['a|b', 'a||b'],
+            ['a' . "\n" . 'b', 'a|nb'],
+            ['a' . "\r" . 'b', 'a|rb'],
+            ['a[b', 'a|[b'],
+            ['a]b', 'a|]b'],
+            ['a' . "\u{85}" . 'b', 'a|xb'],
+            ['a' . "\u{2028}" . 'b', 'a|lb'],
+            ['a' . "\u{2029}" . 'b', 'a|pb'],
+            ['a\'b', 'a|\'b'],
+        ];
+    }
+
     protected function getMockedWriterForEvents(callable $eventScheduler, &$timestamp) {
         return
             $this
