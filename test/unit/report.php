@@ -425,7 +425,7 @@ class report extends test
 
     protected function newWriter(SUT $report)
     {
-        $writer = new \mock\mageekguy\atoum\writers\file('/dev/null');
+        $writer = new \mock\mageekguy\atoum\writers\file(tempnam(sys_get_temp_dir(), 'atoum-teamcity-extension'));
         $report->addWriter($writer);
 
         return $writer;
