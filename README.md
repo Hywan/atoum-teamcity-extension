@@ -1,4 +1,10 @@
-# `atoum/teamcity-extension`
+<p align="center">
+    <img src="./res/logo.png" alt="atoum's logo + TeamCity's logo with floating hearts" width="250px" />
+</p>
+
+---
+
+# atoum/teamcity-extension
 
 [atoum](http://atoum.org/) is a PHP test
 framework. [TeamCity](https://www.jetbrains.com/teamcity/) is a
