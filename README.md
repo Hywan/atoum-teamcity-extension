@@ -27,13 +27,21 @@ require
 $ composer require atoum/teamcity-extension '~0.2'
 ```
 
-To enable the extension, the `.atoum.php` configuration file must be edited to add:
+To always enable the extension, the `.atoum.php` configuration file must be edited to add:
 
 ```php
 use atoum\teamcity;
 
 $extension = new teamcity\extension($script);
 $extension->addToRunner($runner);
+```
+
+If you would like to enable the extension only when tests run from
+within a TeamCity environment, write:
+
+```php
+$extension = new teamcity\extension($script);
+$extension->addToRunnerWithinTeamCityEnvironment($runner);
 ```
 
 ## Testing
