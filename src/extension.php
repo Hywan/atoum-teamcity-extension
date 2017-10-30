@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace atoum\teamcity;
 
 use mageekguy\atoum;
@@ -38,6 +40,24 @@ class extension implements atoum\extension
         $runner->addReport($report);
 
         return $this;
+    }
+
+    /**
+     * See https://confluence.jetbrains.com/display/TCD65/Predefined+Build+Parameters.
+     */
+    public function addToRunnerWithinTeamCityEnvironment(runner $runner) {
+        if (true === $this->isTeamCityEnvironment()) {
+            $this->addToRunner($runner);
+        }
+    }
+
+    public function isTeamCityEnvironment(): bool {
+        $server = $_SERVER ?? [];
+
+        return
+            array_key_exists('TEAMCITY_VERSION', $server) ||
+            array_key_exists('TEAMCITY_PROJECT_NAME', $server) ||
+            array_key_exists('TEAMCITY_BUILDCONF_NAME', $server);
     }
 
     public function setRunner(runner $runner)
