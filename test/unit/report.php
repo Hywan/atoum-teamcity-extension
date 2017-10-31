@@ -412,7 +412,7 @@ class report extends test
 
     protected function getTimestamp(Datetime $dateTime): string
     {
-        return $dateTime->format('Y-m-d\TH:i:s.vP');
+        return $dateTime->format('Y-m-d\TH:i:s.vO');
     }
 
     protected function newReport(DateTime $dateTime)
