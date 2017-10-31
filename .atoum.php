@@ -1,3 +1,3 @@
 <?php
 
-new atoum\teamcity\extension($script);
+$extension = new atoum\teamcity\extension($script);
