@@ -24,7 +24,7 @@ require
 [`atoum/teamcity-extension`](https://packagist.org/packages/atoum/teamcity-extension):
 
 ```sh
-$ composer require atoum/teamcity-extension '~0.3.1'
+$ composer require atoum/teamcity-extension '~1.0'
 ```
 
 To always enable the extension, the `.atoum.php` configuration file must be edited to add:
