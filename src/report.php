@@ -436,7 +436,7 @@ class report extends asynchronous
         foreach ($score->getDurations() as $duration) {
             if ($testSuiteName === $duration['class'] &&
                 $testCaseName  === $duration['method']) {
-                return round($duration['value'] * 1000, 2);
+                return round($duration['value'] * 1000, 0);
             }
         }
 

@@ -15,7 +15,7 @@ class report extends test
     const TEST_SUITE_NAME = 'C';
     const TEST_CASE_NAME  = 'f';
     const TEST_PATH       = '/dev/null';
-    const TEST_DURATION   = 0.42;
+    const TEST_DURATION   = 7;
 
     public function testTestRunStart()
     {
