@@ -31,12 +31,17 @@ class extension implements atoum\extension
         $this->report = new report();
     }
 
-    public function addToRunner(runner $runner)
+    public function addToRunner(runner $runner, bool $removePreviousReports = false)
     {
         $report = $this->getReport();
         $report->addWriter(new writers\std\out());
 
         $runner->addExtension($this);
+
+        if (true === $removePreviousReports) {
+            $runner->removeReports();
+        }
+
         $runner->addReport($report);
 
         return $this;
@@ -45,9 +50,9 @@ class extension implements atoum\extension
     /**
      * See https://confluence.jetbrains.com/display/TCD65/Predefined+Build+Parameters.
      */
-    public function addToRunnerWithinTeamCityEnvironment(runner $runner) {
+    public function addToRunnerWithinTeamCityEnvironment(runner $runner, bool $removePreviousReports = false) {
         if (true === $this->isTeamCityEnvironment()) {
-            $this->addToRunner($runner);
+            $this->addToRunner($runner, $removePreviousReports);
         }
     }
 
