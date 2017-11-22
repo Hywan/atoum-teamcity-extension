@@ -44,6 +44,10 @@ $extension = new teamcity\extension($script);
 $extension->addToRunnerWithinTeamCityEnvironment($runner);
 ```
 
+The following screenshot shows the tests of this extension displayed in a TeamCity instance:
+
+![The extension in action inside TeamCity](https://mntio.files.wordpress.com/2017/11/screen-shot-2017-11-06-at-10-59-40.png?w=1100)
+
 ## Testing
 
 Before running the test suites, the development dependencies must be installed:
